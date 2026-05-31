@@ -2,6 +2,14 @@
 
 Projeto desenvolvido por **Lucas Carvalho**, utilizando **ESP32**, **Servo Motor**, **WiFiManager** e comunicação HTTPS para consultar um servidor remoto e acionar automaticamente um mecanismo de alimentação.
 
+Vídeo demonstrativo:
+
+https://youtube.com/shorts/y-lWRxs5EJ0?si=efsadl-dJ4v_SJZF
+
+Backend:
+
+Frontend:
+
 ## 📋 Funcionamento
 
 O ESP32 conecta-se à internet e realiza uma consulta a cada **5 segundos** no endpoint:
