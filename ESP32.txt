@@ -1,0 +1,191 @@
+// POR LUCAS CARVALHO — versão com SERVO e consulta dog1
+
+#include <Arduino.h>
+#include <WiFi.h>
+#include <HTTPClient.h>
+#include <WiFiManager.h>
+#include <ESP32Servo.h>
+
+// -------------------- CONFIG --------------------
+const String consultaUrl = "https://backend-dog-9e63.onrender.com/consulta?machine=dog1";
+
+// LED único de status
+const int LED_STATUS = 2;
+
+// Servo
+const int SERVO_PIN = 14;
+Servo servoMotor;
+
+// Posições do servo
+const int SERVO_REPOUSO = 90;
+const int SERVO_ACIONADO = 0;
+
+// Intervalo de consulta
+const unsigned long POLL_INTERVAL_MS = 5000;
+
+// -------------------- VARIÁVEIS --------------------
+unsigned long lastPoll = 0;
+unsigned long lastBlink = 0;
+unsigned long lastReco = 0;
+
+bool ledState = false;
+bool portalAtivo = false;
+
+WiFiManager wifiManager;
+
+// -------------------- FUNÇÕES --------------------
+void blinkWhileConnecting(unsigned long now) {
+  if (now - lastBlink >= 500) {
+    ledState = !ledState;
+    digitalWrite(LED_STATUS, ledState ? HIGH : LOW);
+    lastBlink = now;
+  }
+
+  if (now - lastReco >= 5000) {
+    WiFi.reconnect();
+    lastReco = now;
+  }
+}
+
+void acionarServo() {
+  Serial.println("Movendo servo para 0 graus");
+
+  servoMotor.write(SERVO_ACIONADO);
+
+  delay(3000);
+
+  Serial.println("Voltando servo para 90 graus");
+
+  servoMotor.write(SERVO_REPOUSO);
+}
+
+void consultarMaquina() {
+  HTTPClient https;
+
+  Serial.println("[HTTPS] begin...");
+
+  if (https.begin(consultaUrl)) {
+
+    Serial.println("[HTTPS] GET...");
+
+    int httpCode = https.GET();
+
+    if (httpCode > 0) {
+
+      Serial.printf("[HTTPS] GET... code: %d\n", httpCode);
+
+      if (httpCode == HTTP_CODE_OK ||
+          httpCode == HTTP_CODE_MOVED_PERMANENTLY) {
+
+        String payload = https.getString();
+        payload.trim();
+
+        Serial.println("payload:");
+        Serial.println(payload);
+
+        if (payload == "true") {
+          acionarServo();
+        } else {
+          Serial.println("Retorno false");
+          servoMotor.write(SERVO_REPOUSO);
+        }
+
+      } else {
+        Serial.println("HTTP não OK");
+      }
+
+    } else {
+      Serial.printf("[HTTPS] GET failed: %s\n",
+                    https.errorToString(httpCode).c_str());
+    }
+
+    https.end();
+
+  } else {
+    Serial.println("[HTTPS] Unable to connect");
+  }
+}
+
+// -------------------- SETUP --------------------
+void setup() {
+
+  Serial.begin(115200);
+
+  pinMode(LED_STATUS, OUTPUT);
+  digitalWrite(LED_STATUS, LOW);
+
+  // Servo
+  servoMotor.attach(SERVO_PIN);
+  servoMotor.write(SERVO_REPOUSO);
+
+  // WiFi Manager
+  wifiManager.setConfigPortalTimeout(180);
+  wifiManager.setConfigPortalBlocking(false);
+
+  // Rede DOGUINHO sem senha
+  bool conectado = wifiManager.autoConnect("DOGUINHO");
+
+  if (conectado) {
+
+    Serial.println("Conectado ao Wi-Fi.");
+    Serial.print("IP: ");
+    Serial.println(WiFi.localIP());
+
+    digitalWrite(LED_STATUS, HIGH);
+    ledState = true;
+
+  } else {
+
+    Serial.println("*wm:Starting Web Portal");
+    portalAtivo = true;
+  }
+}
+
+// -------------------- LOOP --------------------
+void loop() {
+
+  unsigned long now = millis();
+
+  if (WiFi.status() != WL_CONNECTED) {
+
+    if (!portalAtivo) {
+
+      // Rede DOGUINHO sem senha
+      wifiManager.startConfigPortal("DOGUINHO");
+
+      portalAtivo = true;
+      Serial.println("*wm:Starting Web Portal");
+    }
+
+    blinkWhileConnecting(now);
+
+    wifiManager.process();
+
+    // Mantém servo em repouso
+    servoMotor.write(SERVO_REPOUSO);
+
+    return;
+  }
+
+  if (portalAtivo) {
+    portalAtivo = false;
+    Serial.println("Conectado ao Wi-Fi.");
+  }
+
+  if (!ledState || digitalRead(LED_STATUS) == LOW) {
+    ledState = true;
+    digitalWrite(LED_STATUS, HIGH);
+  }
+
+  // Garante posição de repouso
+  servoMotor.write(SERVO_REPOUSO);
+
+  if (now - lastPoll >= POLL_INTERVAL_MS) {
+
+    lastPoll = now;
+
+    consultarMaquina();
+
+    Serial.println("TEMPO DE CONSULTA 5 SEGUNDOS");
+  }
+}
