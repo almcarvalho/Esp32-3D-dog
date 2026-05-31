@@ -7,8 +7,10 @@ Vídeo demonstrativo:
 https://youtube.com/shorts/y-lWRxs5EJ0?si=efsadl-dJ4v_SJZF
 
 Backend:
+https://github.com/almcarvalho/backend-dog
 
 Frontend:
+https://github.com/almcarvalho/frontend-dog
 
 ## 📋 Funcionamento
 
