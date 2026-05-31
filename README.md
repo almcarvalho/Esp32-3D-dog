@@ -12,6 +12,9 @@ https://github.com/almcarvalho/backend-dog
 Frontend:
 https://github.com/almcarvalho/frontend-dog
 
+Tutorial youtube: back + front:
+https://www.youtube.com/live/T4b-AbtbchI?si=LxcJeRFEp-yPoXF0
+
 ## 📋 Funcionamento
 
 O ESP32 conecta-se à internet e realiza uma consulta a cada **5 segundos** no endpoint:
