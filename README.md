@@ -149,6 +149,15 @@ Os arquivos STL permitem montar o alimentador físico que abriga:
 * Compartimento de ração
 * Estrutura de fixação
 
+<img width="719" height="514" alt="image" src="https://github.com/user-attachments/assets/1b9d03ed-4c0a-466a-8295-cb54a06e400c" />
+
+<img width="713" height="526" alt="image" src="https://github.com/user-attachments/assets/f9e5133c-6f75-46bf-9cf0-12fcbcc6e463" />
+
+<img width="724" height="491" alt="image" src="https://github.com/user-attachments/assets/b0102dfe-0147-47aa-8f2e-d10630d0680e" />
+
+
+
+
 ---
 
 ## 👨‍💻 Autor
