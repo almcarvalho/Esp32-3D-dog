@@ -4,7 +4,13 @@ Projeto desenvolvido por **Lucas Carvalho**, utilizando **ESP32**, **Servo Motor
 
 Vídeo demonstrativo:
 
+Versão 01 (Com servo motor 9g)
 https://youtube.com/shorts/y-lWRxs5EJ0?si=efsadl-dJ4v_SJZF
+
+Versão 02 (Com relé e motor de vidro de carro)
+https://www.youtube.com/shorts/vJgP1GAKVUo
+
+https://www.youtube.com/shorts/EegEXjlU52c
 
 Backend:
 https://github.com/almcarvalho/backend-dog
