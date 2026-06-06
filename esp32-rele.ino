@@ -18,8 +18,8 @@ const int LED_STATUS = 2;
 const int RELE_PIN = 14;
 
 // Ajuste conforme seu módulo relé
-const int RELE_LIGADO = LOW;
-const int RELE_DESLIGADO = HIGH;
+const int RELE_LIGADO = HIGH;
+const int RELE_DESLIGADO = LOW;
 
 // Intervalo de consulta
 const unsigned long POLL_INTERVAL_MS = 5000;
