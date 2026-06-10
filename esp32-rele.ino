@@ -1,4 +1,4 @@
-// POR LUCAS CARVALHO — versão com RELÉ e consulta dog1
+// POR LUCAS CARVALHO — versão com RELÉ e consulta por tempo em ms
 
 #include <Arduino.h>
 #include <WiFi.h>
@@ -6,10 +6,7 @@
 #include <WiFiManager.h>
 
 // -------------------- CONFIG --------------------
-const String consultaUrl = "https://backend-dog-9e62.onrender.com/consulta?machine=dog1";
-
-// Tempo de acionamento do relé em segundos
-const unsigned long TEMPO_RELE_SEGUNDOS = 180;
+const String consultaUrl = "https://backend-dog-9e62.onrender.com/consulta?machine=aquiles";
 
 // LED único de status
 const int LED_STATUS = 2;
@@ -48,12 +45,14 @@ void blinkWhileConnecting(unsigned long now) {
   }
 }
 
-void acionarRele() {
-  Serial.println("Ligando relé");
+void acionarRele(unsigned long tempoMs) {
+  Serial.print("Ligando relé por ");
+  Serial.print(tempoMs);
+  Serial.println(" ms");
 
   digitalWrite(RELE_PIN, RELE_LIGADO);
 
-  delay(TEMPO_RELE_SEGUNDOS * 1000UL);
+  delay(tempoMs);
 
   Serial.println("Desligando relé");
 
@@ -84,10 +83,12 @@ void consultarMaquina() {
         Serial.println("payload:");
         Serial.println(payload);
 
-        if (payload == "true") {
-          acionarRele();
+        unsigned long tempoMs = payload.toInt();
+
+        if (tempoMs > 0) {
+          acionarRele(tempoMs);
         } else {
-          Serial.println("Retorno false");
+          Serial.println("Retorno 0");
           digitalWrite(RELE_PIN, RELE_DESLIGADO);
         }
 
